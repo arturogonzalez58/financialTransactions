@@ -42,6 +42,6 @@ func TestGenerator(t *testing.T) {
 		}
 		data := g.GenerateData()
 		assert.True(t, len(data) == 10)
-		assert.Contains(t, data, mockTransactionError)
+		assert.Contains(t, data, mockTransaction)
 	})
 }

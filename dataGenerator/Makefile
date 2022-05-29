@@ -4,6 +4,9 @@ build:
 run:
 	go run cmd/main.go
 
+test:
+	go test ./...
+
 build-docker-image:
 	docker image build -t data-generator .
 

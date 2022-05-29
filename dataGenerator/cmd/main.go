@@ -40,17 +40,20 @@ func main() {
 
 	AwsRegion := os.Getenv("AWS_REGION")
 	S3Bucket := arguments[2]
-
+	fmt.Println(S3Bucket)
 	s3Uploader, err := s3.Build(AwsRegion, S3Bucket)
 	if err != nil {
-		fmt.Println("Unable to create a session with aws: %w", err)
+		fmt.Println("Unable to create a session with aws:", err)
 		os.Exit(2)
 	}
 
+	percentageValue := float32(ERROR_PERCENTAGE) / 100.00
+
 	initialDate := time.Date(2021, 1, 0, 0, 0, 0, 0, time.UTC)
 	finalDate := time.Date(2022, 1, 0, 0, 0, 0, 0, time.UTC)
-	data := generator.Builder(int32(NUMBER_OF_DATA), float32(ERROR_PERCENTAGE/100.00), initialDate, finalDate).GenerateData()
+	data := generator.Builder(int32(NUMBER_OF_DATA), percentageValue, initialDate, finalDate).GenerateData()
 	dataToSave, err := csv.Build(data).ToCsv()
+	fmt.Println(string(dataToSave))
 	if err != nil {
 		fmt.Println("there was a problem creating the csv data:", err)
 		os.Exit(2)

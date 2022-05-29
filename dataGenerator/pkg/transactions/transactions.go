@@ -47,7 +47,7 @@ func (t TransactionGenerator) GenerateTransaction() Transaction {
 func (t TransactionGenerator) GenerateTransactionWithError() Transaction {
 	rand.Seed(time.Now().UnixNano())
 	return Transaction{
-		Id:     "",
+		Id:     "invalid",
 		Date:   t.dateGenerator.GenerateRandomDate(),
 		Amount: 0.0,
 	}

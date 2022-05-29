@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"fmt"
 	"github.com/arturogonzalez58/financialTransactions/dataGenerator/pkg/transactions"
 	"math/rand"
 	"time"
@@ -29,8 +30,8 @@ func Builder(dataSie int32, errorPercentage float32, initialDate time.Time, fina
 
 func (g Generator) GenerateData() []transactions.Transaction {
 	data := make([]transactions.Transaction, g.dataSize)
-	for i, _ := range data {
-		if g.isAnError() {
+	for i := range data {
+		if !g.isAnError() {
 			data[i] = g.transactionGenerator.GenerateTransaction()
 		} else {
 			data[i] = g.transactionGenerator.GenerateTransactionWithError()
@@ -40,5 +41,7 @@ func (g Generator) GenerateData() []transactions.Transaction {
 }
 
 func (g Generator) isAnError() bool {
+	fmt.Printf("%f", g.errorPercentage)
+	fmt.Printf("%f", rand.Float32())
 	return g.errorPercentage > rand.Float32()
 }

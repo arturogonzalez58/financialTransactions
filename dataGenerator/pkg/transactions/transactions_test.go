@@ -45,7 +45,7 @@ func TestTransactionGenerator(t1 *testing.T) {
 		transaction := t.GenerateTransactionWithError()
 		assert.Equal(t1, transaction.Date, dateGenerateMock.mockResponse, "Should be equal")
 		assert.Equal(t1, transaction.Amount, 0.00)
-		assert.Equal(t1, transaction.Id, "")
+		assert.Equal(t1, transaction.Id, "invalid")
 	})
 
 	t1.Run("Transaction to record", func(t1 *testing.T) {
@@ -60,7 +60,7 @@ func TestTransactionGenerator(t1 *testing.T) {
 		transaction := t.GenerateTransactionWithError()
 		record := transaction.ToRecord()
 		assert.Equal(t1, record[1], dateGenerateMock.mockResponse.Date.String(), "Should be equal")
-		assert.Equal(t1, record[2], "0.000000")
-		assert.Equal(t1, record[0], "")
+		assert.Equal(t1, record[2], "0.00")
+		assert.Equal(t1, record[0], "invalid")
 	})
 }
