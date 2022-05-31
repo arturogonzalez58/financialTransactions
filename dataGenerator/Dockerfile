@@ -9,4 +9,4 @@ RUN go mod download
 COPY . /app
 RUN go build -o /bin/dataGenerator cmd/main.go
 
-ENTRYPOINT ["/bin/dataGenerator", "10", "20", "rawdatafinancialtest"]
+ENTRYPOINT ["/bin/dataGenerator", "100", "20", "rawdatafinancialproccesor"]

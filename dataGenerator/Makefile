@@ -11,4 +11,4 @@ build-docker-image:
 	docker image build -t data-generator .
 
 run-docker:
-	docker run --env-file env data-generator
+	docker run --rm --env-file env data-generator

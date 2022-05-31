@@ -1,0 +1,38 @@
+{
+  "Records": [
+    {
+      "eventVersion": "2.1",
+      "eventSource": "aws:s3",
+      "awsRegion": "us-east-1",
+      "eventTime": "2022-05-29T19:04:30.176Z",
+      "eventName": "ObjectCreated:Put",
+      "userIdentity": {
+        "principalId": "AWS:AIDA3PR56RVBKHSFLIRZH"
+      },
+      "requestParameters": {
+        "sourceIPAddress": "38.65.144.107"
+      },
+      "responseElements": {
+        "x-amz-request-id": "4GXWM0PDTXWAPGT9",
+        "x-amz-id-2": "CCtbdc5lRK8025vsTpVS5C0E2bHzhYwSQ8lBZGtLm6D5bmMUVaTRnpDoZpGFOGiFa56rKokalM8b8A+HMY56+8z6u2Ntem/AUt30j5Y6Oxw="
+      },
+      "s3": {
+        "s3SchemaVersion": "1.0",
+        "configurationId": "08453d10-9307-4cf5-88cc-eae7efca55b9",
+        "bucket": {
+          "name": "rawdatafinancialproccesor",
+          "ownerIdentity": {
+            "principalId": "A2MCQQ37SC0LMC"
+          },
+          "arn": "arn:aws:s3:::rawdatafinancialproccesor"
+        },
+        "object": {
+          "key": "d343da86-cc6a-4dc5-b389-49fba0cb5687.csv",
+          "size": 70337,
+          "eTag": "925c3c52426268ad39d91041848b1a41",
+          "sequencer": "006293C3BE1941BC5A"
+        }
+      }
+    }
+  ]
+}

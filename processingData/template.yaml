@@ -1,0 +1,161 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  processingData
+
+  Sample SAM Template for processingData
+
+Globals:
+  Function:
+    Timeout: 600
+Parameters:
+  BucketRawDataName:
+    Type: String
+    Default: rawdatafinancialproccesor
+  BucketSplitRawDataName:
+    Type: String
+    Default: rawdatafinancialproccesorsplit
+  BucketEmailName:
+    Type: String
+    Default: emailreporttransactions
+Resources:
+  SendEmail:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: send_email/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - arm64
+      Policies:
+        - SESCrudPolicy:
+            IdentityName: "arn:aws:ses:us-east-1:789330169154:identity/voltaje-09ping@icloud.com"
+        - S3CrudPolicy:
+            BucketName: !Sub "${BucketEmailName}"
+      Environment:
+        Variables:
+          EMAIL_BUCKET_NAME: emailreporttransactions
+          EMAIL_SOURCE:
+      Events:
+        EmailBucket:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: EmailBucket
+            Events:
+              - 's3:ObjectCreated:*'
+  ReportTransactions:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: report_transactions/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - arm64
+      Environment:
+        Variables:
+          RDS_HOST: ""
+          RDS_USER_NAME: ""
+          RDS_PASSWORD: ""
+          DB_NAME: ""
+          AUTH: ""
+          EMAIL_BUCKET_NAME: emailreporttransactions
+      Policies:
+        - SESCrudPolicy:
+            IdentityName: "arn:aws:ses:us-east-1:789330169154:identity/voltaje-09ping@icloud.com"
+        - S3CrudPolicy:
+            BucketName: !Sub "${BucketEmailName}"
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-080bbe28e36562860
+        SubnetIds:
+          - subnet-04871870b1acd0de5
+          - subnet-075a24be66b0961ba
+          - subnet-0947c932b153a51c6
+          - subnet-0c0cd469d7f2660cf
+          - subnet-0610b7063684bfeb7
+          - subnet-01dd26cedded9311a
+      Events:
+        Transactions:
+          Type: Api
+          Properties:
+            Path: /report
+            Method: post
+  SplitRawFiles:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: split_raw_files/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - arm64
+      Environment:
+        Variables:
+          LINES_PER_FILE: 10
+          SPLIT_BUCKET_NAME: rawdatafinancialproccesorsplit
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Sub "${BucketRawDataName}"
+        - S3CrudPolicy:
+            BucketName: !Sub "${BucketSplitRawDataName}"
+      Events:
+        RawFilesBucket:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: RawFilesBucket
+            Events:
+              - 's3:ObjectCreated:*'
+  ProcessSplitFiles:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: process_split_files/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - arm64
+      Environment:
+        Variables:
+          RDS_HOST: ""
+          RDS_USER_NAME: ""
+          RDS_PASSWORD: ""
+          DB_NAME: ""
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Sub "${BucketRawDataName}"
+        - S3CrudPolicy:
+            BucketName: !Sub "${BucketSplitRawDataName}"
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-080bbe28e36562860
+        SubnetIds:
+          - subnet-04871870b1acd0de5
+          - subnet-075a24be66b0961ba
+          - subnet-0947c932b153a51c6
+          - subnet-0c0cd469d7f2660cf
+          - subnet-0610b7063684bfeb7
+          - subnet-01dd26cedded9311a
+      Events:
+        SplitRawFilesBucket:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: SplitRawFilesBucket
+            Events:
+              - 's3:ObjectCreated:*'
+  RawFilesBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Sub "${BucketRawDataName}"
+  SplitRawFilesBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Sub "${BucketSplitRawDataName}"
+  EmailBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Sub "${BucketEmailName}"
+Outputs:
+  TransactionsApi:
+    Description: "API Gateway endpoint URL for Prod stage for TransactionsAPI"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/report/"

@@ -1,0 +1,13 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "transactions"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-ttrypntfueh9"
+s3_prefix = "transactions"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+parameter_overrides = "BucketRawDataName=\"rawdatafinancialproccesor\" BucketSplitRawDataName=\"rawdatafinancialproccesorsplit\""
+image_repositories = []
